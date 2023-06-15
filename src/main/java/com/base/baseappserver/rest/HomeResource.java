@@ -8,6 +8,6 @@ public class HomeResource {
 
     @RequestMapping("/home")
     public String home() {
-        return "Hello world";
+        return "Hello world 123";
     }
 }
