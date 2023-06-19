@@ -2,14 +2,21 @@
 # Build stage
 #
 FROM gradle:7.6.1-jdk17 AS build
-COPY . .
-RUN gradle assemble
+COPY --chown=gradle:gradle . /home/gradle/src
+WORKDIR /home/gradle/src
+RUN gradle assemble --no-daemon
 
 #
 # Package stage
 #
 FROM openjdk:17
-COPY --from=build /libs/base-app-server-0.0.1-SNAPSHOT.jar server.jar
+
+EXPOSE 8080
+
+RUN mkdir /app
+
+COPY --from=build /home/gradle/src/build/libs/*.jar /app/base-app-server.jar
 # ENV PORT=8080
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","server.jar"]
+ENTRYPOINT ["java","-jar", "/app/base-app-server.jar"]
+
